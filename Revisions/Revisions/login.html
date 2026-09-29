@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#060c16" />
+    <meta
+      name="description"
+      content="Maritime Surveillance System — Secure Access Portal for Marine Tracking & Oil Spill Detection."
+    />
+    <title>Maritime Surveillance System | Access Portal</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Login Page Stylesheet -->
+    <link rel="stylesheet" href="login.css" />
+  </head>
+  <body>
+    <!-- Background Nautical Tactical Grid -->
+    <div class="tactical-grid-bg" aria-hidden="true"></div>
+
+    <!-- Top-Left Back Navigation to Orbital Globe -->
+    <a href="oilspill.html" class="btn-back-link" title="Return to Living Globe">
+      <svg viewBox="0 0 20 20" fill="currentColor" class="back-icon">
+        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+      </svg>
+      <span>Return to Globe</span>
+    </a>
+
+    <!-- Left: Real-time Tactical Radar Display Canvas -->
+    <canvas id="radar-canvas" aria-label="Tactical Maritime Radar Display"></canvas>
+
+    <!-- Right: Maritime Coastal Chart & Bathymetry Silhouette Overlay -->
+    <div class="coastline-container" aria-hidden="true">
+      <svg
+        class="coastline-svg"
+        viewBox="0 0 600 900"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="xMaxYMid slice"
+      >
+        <defs>
+          <!-- Subtle coastal land gradient -->
+          <linearGradient id="coastGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#040a14" stop-opacity="0.9" />
+            <stop offset="100%" stop-color="#02050b" stop-opacity="0.98" />
+          </linearGradient>
+
+          <!-- Land glow filter -->
+          <filter id="shoreGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="-1" dy="0" stdDeviation="3" flood-color="#4696e6" flood-opacity="0.25" />
+          </filter>
+        </defs>
+
+        <!-- Outer Bathymetric Depth Contour Line 1 -->
+        <path
+          d="M 460,0 C 470,80 430,120 440,180 C 450,220 530,260 510,320 C 490,380 450,440 470,520 C 490,600 390,640 400,720 C 410,780 450,840 440,900"
+          stroke="rgba(45, 95, 155, 0.14)"
+          stroke-width="1.2"
+          stroke-dasharray="6 4"
+        />
+
+        <!-- Bathymetric Depth Contour Line 2 -->
+        <path
+          d="M 490,0 C 510,70 470,110 480,170 C 490,210 570,250 540,310 C 510,370 480,430 500,510 C 520,590 420,630 430,710 C 440,770 480,830 470,900"
+          stroke="rgba(65, 125, 195, 0.22)"
+          stroke-width="1.2"
+        />
+
+        <!-- Coastline Landmass Silhouette -->
+        <path
+          d="M 600,0 L 525,0 C 530,35 520,65 535,90 C 515,115 525,145 540,170 C 555,190 575,200 580,225 C 585,250 560,265 570,290 C 585,325 570,360 565,395 C 555,425 540,455 545,490 C 550,520 570,545 560,575 C 540,610 470,615 475,650 C 480,685 500,710 505,745 C 515,790 535,840 550,900 L 600,900 Z"
+          fill="url(#coastGrad)"
+          stroke="rgba(80, 150, 225, 0.45)"
+          stroke-width="1.5"
+          filter="url(#shoreGlow)"
+        />
+
+        <!-- Offshore Islands & Coastal Outcrops -->
+        <path
+          d="M 505,140 C 515,135 522,145 518,155 C 512,165 500,160 505,140 Z"
+          fill="#03070f"
+          stroke="rgba(80, 150, 225, 0.4)"
+          stroke-width="1"
+        />
+        <path
+          d="M 500,685 C 508,680 514,688 510,696 C 504,702 496,698 500,685 Z"
+          fill="#03070f"
+          stroke="rgba(80, 150, 225, 0.4)"
+          stroke-width="1"
+        />
+
+        <!-- Offshore Ship Vessel 1 (Upper Right) -->
+        <g transform="translate(480, 325) rotate(-28) scale(1.1)">
+          <!-- Ship Hull Outline -->
+          <polygon
+            points="0,-10 4,-5 4,8 -4,8 -4,-5"
+            fill="rgba(107, 182, 240, 0.75)"
+            stroke="rgba(180, 230, 255, 0.9)"
+            stroke-width="1"
+          />
+          <!-- Superstructure -->
+          <rect x="-2" y="-1" width="4" height="3" fill="#ffffff" />
+        </g>
+
+        <!-- Offshore Ship Vessel 2 (Lower Right Bay) -->
+        <g transform="translate(530, 700) rotate(18) scale(0.95)">
+          <polygon
+            points="0,-10 4,-5 4,8 -4,8 -4,-5"
+            fill="rgba(107, 182, 240, 0.65)"
+            stroke="rgba(180, 230, 255, 0.85)"
+            stroke-width="1"
+          />
+          <rect x="-2" y="-1" width="4" height="3" fill="#ffffff" />
+        </g>
+      </svg>
+    </div>
+
+    <!-- Center Login / Sign Up Panel -->
+    <main class="login-wrapper">
+      <!-- Maritime Surveillance Insignia (Naval Anchor + Steering Helm / Reticle) -->
+      <svg
+        class="insignia-badge"
+        viewBox="0 0 100 100"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="Maritime Surveillance System Insignia"
+      >
+        <!-- Center Targeting Crosshairs / Compass Ticks -->
+        <line x1="50" y1="4" x2="50" y2="16" stroke="#f2f7ff" stroke-width="2.6" stroke-linecap="round" />
+        <line x1="50" y1="84" x2="50" y2="96" stroke="#f2f7ff" stroke-width="2.6" stroke-linecap="round" />
+        <line x1="4" y1="50" x2="16" y2="50" stroke="#f2f7ff" stroke-width="2.6" stroke-linecap="round" />
+        <line x1="84" y1="50" x2="96" y2="50" stroke="#f2f7ff" stroke-width="2.6" stroke-linecap="round" />
+
+        <!-- Outer Compass Ring -->
+        <circle cx="50" cy="50" r="32" stroke="#f2f7ff" stroke-width="2.4" />
+
+        <!-- Diagonal Helm Spokes -->
+        <line x1="26" y1="26" x2="32" y2="32" stroke="#f2f7ff" stroke-width="2" stroke-linecap="round" />
+        <line x1="74" y1="26" x2="68" y2="32" stroke="#f2f7ff" stroke-width="2" stroke-linecap="round" />
+        <line x1="26" y1="74" x2="32" y2="68" stroke="#f2f7ff" stroke-width="2" stroke-linecap="round" />
+        <line x1="74" y1="74" x2="68" y2="68" stroke="#f2f7ff" stroke-width="2" stroke-linecap="round" />
+
+        <!-- Anchor Shackle (Top Ring) -->
+        <circle cx="50" cy="27" r="5" stroke="#f2f7ff" stroke-width="2.4" />
+
+        <!-- Anchor Stock (Horizontal Crossbar) -->
+        <line x1="38" y1="36" x2="62" y2="36" stroke="#f2f7ff" stroke-width="2.8" stroke-linecap="round" />
+
+        <!-- Anchor Shank (Vertical Shaft) -->
+        <line x1="50" y1="32" x2="50" y2="68" stroke="#f2f7ff" stroke-width="3.2" />
+
+        <!-- Anchor Curved Arms / Flukes -->
+        <path
+          d="M 33,57 C 34,70 42,75 50,75 C 58,75 66,70 67,57"
+          stroke="#f2f7ff"
+          stroke-width="3"
+          stroke-linecap="round"
+        />
+
+        <!-- Left Fluke Arrow / Palm -->
+        <path d="M 30,59 L 33,52 L 38,58 Z" fill="#f2f7ff" />
+
+        <!-- Right Fluke Arrow / Palm -->
+        <path d="M 70,59 L 67,52 L 62,58 Z" fill="#f2f7ff" />
+
+        <!-- Bottom Crown Spike -->
+        <path d="M 48,75 L 50,79 L 52,75 Z" fill="#f2f7ff" />
+      </svg>
+
+      <!-- System Header -->
+      <h1 class="system-title">Maritime Surveillance System</h1>
+      <div class="system-subtitle">Detect &nbsp;/&nbsp; Trace &nbsp;/&nbsp; Protect</div>
+
+      <!-- Segmented Mode Selector: Login vs Sign Up -->
+      <div class="role-segmented-control" role="tablist" aria-label="Access Mode">
+        <button
+          type="button"
+          class="role-tab-btn active"
+          role="tab"
+          aria-selected="true"
+          data-mode="login"
+        >
+          Login
+        </button>
+        <button
+          type="button"
+          class="role-tab-btn"
+          role="tab"
+          aria-selected="false"
+          data-mode="signup"
+        >
+          Sign Up
+        </button>
+      </div>
+
+      <!-- ========================= LOGIN FORM ========================= -->
+      <form id="login-form" class="login-form" autocomplete="on">
+
+        <!-- Email Input Group -->
+        <div class="input-group">
+          <span class="input-icon" aria-hidden="true">
+            <!-- Mail Outline SVG Icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+            </svg>
+          </span>
+          <input
+            type="email"
+            id="email-input"
+            class="input-field"
+            placeholder="Email Address"
+            required
+            autocomplete="email"
+          />
+        </div>
+
+        <!-- Password Input Group -->
+        <div class="input-group">
+          <span class="input-icon" aria-hidden="true">
+            <!-- Padlock Outline SVG Icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </span>
+          <input
+            type="password"
+            id="password-input"
+            class="input-field"
+            placeholder="Password"
+            required
+            autocomplete="current-password"
+          />
+          <button
+            type="button"
+            id="password-toggle-btn"
+            class="password-toggle-btn"
+            aria-label="Show password"
+            title="Toggle password visibility"
+          >
+            <!-- Eye Outline SVG Icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="login-btn" class="btn-submit">
+          <span class="btn-spinner" aria-hidden="true"></span>
+          <span class="btn-text">LOGIN</span>
+        </button>
+
+        <!-- Quick Demo Autofill Shortcut -->
+        <div class="demo-login-shortcuts">
+          <span class="demo-label">1-Click Demo Fill:</span>
+          <button type="button" class="btn-demo-pill" id="demo-employee-btn">Demo Employee</button>
+        </div>
+
+        <!-- Feedback & Clearance Status Notification -->
+        <div id="auth-feedback" class="auth-feedback" role="status" aria-live="polite"></div>
+      </form>
+
+      <!-- ========================= SIGN UP FORM ========================= -->
+      <form id="signup-form" class="login-form" autocomplete="on" style="display:none;">
+
+        <!-- Full Name -->
+        <div class="input-group">
+          <span class="input-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </span>
+          <input
+            type="text"
+            id="signup-name"
+            class="input-field"
+            placeholder="Full Name"
+            required
+            autocomplete="name"
+          />
+        </div>
+
+        <!-- Email -->
+        <div class="input-group">
+          <span class="input-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+            </svg>
+          </span>
+          <input
+            type="email"
+            id="signup-email"
+            class="input-field"
+            placeholder="Work Email Address"
+            required
+            autocomplete="email"
+          />
+        </div>
+
+        <!-- Designation / Organisation -->
+        <div class="input-group">
+          <span class="input-icon" aria-hidden="true">
+            <!-- Badge / ID card icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+              <path d="M8 21h8M12 17v4"></path>
+              <circle cx="9" cy="10" r="2"></circle>
+              <path d="M15 8h2M15 12h2"></path>
+            </svg>
+          </span>
+          <input
+            type="text"
+            id="signup-designation"
+            class="input-field"
+            placeholder="Designation / Organisation"
+            required
+          />
+        </div>
+
+        <!-- New Password -->
+        <div class="input-group">
+          <span class="input-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </span>
+          <input
+            type="password"
+            id="signup-password"
+            class="input-field"
+            placeholder="Create Password"
+            required
+            autocomplete="new-password"
+          />
+          <button
+            type="button"
+            id="signup-password-toggle"
+            class="password-toggle-btn"
+            aria-label="Show password"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="input-group">
+          <span class="input-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 12l2 2 4-4"></path>
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </span>
+          <input
+            type="password"
+            id="signup-confirm-password"
+            class="input-field"
+            placeholder="Confirm Password"
+            required
+            autocomplete="new-password"
+          />
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="signup-btn" class="btn-submit">
+          <span class="btn-spinner" aria-hidden="true"></span>
+          <span class="btn-text">REQUEST ACCESS</span>
+        </button>
+
+        <!-- Signup Info Note -->
+        <div class="demo-login-shortcuts" style="justify-content: center;">
+          <span class="demo-label" style="font-size:10px; color:#5a7a9a;">Access requests are reviewed by the system administrator.</span>
+        </div>
+
+        <!-- Feedback -->
+        <div id="signup-feedback" class="auth-feedback" role="status" aria-live="polite"></div>
+      </form>
+
+      <!-- Footer Restricted Access Notice -->
+      <footer class="restricted-notice">
+        <!-- Small Padlock SVG -->
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2C9.24 2 7 4.24 7 7v3H6c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V7c0-2.76-2.24-5-5-5zm0 2c1.66 0 3 1.34 3 3v3H9V7c0-1.66 1.34-3 3-3zm0 10c1.1 0 2 .9 2 2 0 .74-.4 1.38-1 1.72V19h-2v-1.28c-.6-.34-1-.98-1-1.72 0-1.1.9-2 2-2z" />
+        </svg>
+        <span>Restricted Access &mdash; Authorized Personnel Only</span>
+      </footer>
+    </main>
+
+    <!-- Interactive Radar & Form Controller Script -->
+    <script src="login.js"></script>
+  </body>
+</html>

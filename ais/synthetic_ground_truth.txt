@@ -1,0 +1,11 @@
+SYNTHETIC DATASET
+=================
+
+This dataset is SYNTHETIC and is not real AIS data.
+
+Spill latitude: 19.68805
+Spill longitude: -92.07878
+Spill time: 2020-07-27 00:15:46 UTC
+
+Planted source vessel: 900000001
+Vessel name: OCEAN STAR
