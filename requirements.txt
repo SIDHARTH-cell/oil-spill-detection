@@ -8,3 +8,4 @@ shapely
 requests
 torch
 torchvision
+rasterio
